@@ -31,9 +31,11 @@ ip_url = st.text_input("Enter the IP Webcam URL (e.g., http://192.168.0.101:8080
 def get_frame_from_ipcam(ip_url):
     cap = cv2.VideoCapture(ip_url)
     ret, frame = cap.read()
-    cap.release()
-    return frame
-
+    cap.release()  # Release the capture to avoid resource leaks
+    if ret:
+        return frame
+    else:
+        return None
 
 if st.button("Start QR Code Scan"):
     if ip_url:
@@ -49,6 +51,7 @@ if st.button("Start QR Code Scan"):
             else:
                 st.error("No QR Code detected. Try again!")
         else:
-            st.error("Unable to capture frame from IP webcam.")
+            st.error("Unable to capture frame from IP webcam. Check the URL and ensure the webcam is accessible.")
     else:
-        st.warning("Please enter a valid IP webcam URL.")
+        st.warning("Please enter a valid IP webcam URL.")
+
