@@ -1,25 +1,33 @@
 import cv2
 import numpy as np
-from pyzbar.pyzbar import decode
 import streamlit as st
 from PIL import Image
 import requests
 
-# Function to rotate image and detect QR codes
-def scan_qr_code(frame):
-    qr_codes = decode(frame)
-    if qr_codes:
-        for qr_code in qr_codes:
-            data = qr_code.data.decode('utf-8')
-            return data
+# Function to rotate image
+def rotate_image(frame, angle):
+    return np.rot90(frame, k=angle // 90)
 
+# Function to detect QR codes using OpenCV
+def detect_qr_code(frame):
+    # Initialize the QR code detector
+    detector = cv2.QRCodeDetector()
+    data, bbox, _ = detector(frame)
+    return data
+
+# Function to scan QR code
+def scan_qr_code(frame):
+    # Try detecting without rotation first
+    data = detect_qr_code(frame)
+    if data:
+        return data
+
+    # Check for rotated images
     for angle in [90, 180, 270]:
-        rotated_frame = np.rot90(frame, k=angle // 90)
-        qr_codes_rotated = decode(rotated_frame)
-        if qr_codes_rotated:
-            for qr_code in qr_codes_rotated:
-                data = qr_code.data.decode('utf-8')
-                return data
+        rotated_frame = rotate_image(frame, angle)
+        data = detect_qr_code(rotated_frame)
+        if data:
+            return data
     return None
 
 # Streamlit app for QR code scanning
