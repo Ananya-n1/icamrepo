@@ -1,3 +1,4 @@
+#Multiple Qr code Scanner
 import streamlit as st
 import cv2
 import pandas as pd
