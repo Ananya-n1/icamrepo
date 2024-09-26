@@ -1,6 +1,5 @@
 streamlit
-opencv-python-headless
-pyzbar
-Pillow
-requests
+opencv-python
+pandas
+openpyxl
 numpy
